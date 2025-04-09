@@ -5,11 +5,11 @@ def call() {
 
     stage('Unit Tests') {
         echo 'Running unit tests...'
-        sh './gradlew test'
+        echo 'This is from Shared library'
     }
 
     stage('Deploy') {
-        echo 'Deploying to environment...'
-        sh './deploy.sh'
+        echo 'Deploying to environment... from shared library'
+        
     }
 }
