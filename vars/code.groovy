@@ -1,15 +1,17 @@
-def call() {
-    stage('Checkout') {
-        checkout scm
+def installAndTestApp(path = 'myapp/backend') {
+    dir(path) {
+        sh 'npm install'
+        sh 'npm test || echo "No tests found"'
     }
+}
 
-    stage('Unit Tests') {
-        echo 'Running unit tests...'
-        echo 'This is from Shared library'
-    }
-
-    stage('Deploy') {
-        echo 'Deploying to environment... from shared library'
-        
+def deployToK8s(kubeDir = 'myapp/kubernetes') {
+    withKubeConfig([credentialsId: 'kubeconfig']) {
+        dir(kubeDir) {
+            sh 'kubectl apply -f deployment.yaml'
+            sh 'kubectl apply -f service.yaml'
+            sh 'kubectl rollout status deployment my-sample-app-deployment'
+            sh 'kubectl get pods'
+        }
     }
 }
