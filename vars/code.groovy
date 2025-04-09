@@ -1,11 +1,11 @@
-def installAndTestApp(path = 'myapp/backend') {
+def installAndTestApp(String path = 'myapp/backend') {
     dir(path) {
         sh 'npm install'
         sh 'npm test || echo "No tests found"'
     }
 }
 
-def deployToK8s(kubeDir = 'myapp/kubernetes') {
+def deployToK8s(String kubeDir = 'myapp/kubernetes') {
     withKubeConfig([credentialsId: 'kubeconfig']) {
         dir(kubeDir) {
             sh 'kubectl apply -f deployment.yaml'
