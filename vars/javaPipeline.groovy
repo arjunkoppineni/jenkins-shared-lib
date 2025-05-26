@@ -2,14 +2,18 @@ def call(Map config = [:]) {
     pipeline {
         agent any
 
-        environment {
-            IMAGE_NAME = config.imageName ?: 'my-org/java-app'
-            TAG = config.tag ?: 'latest'
-            DOCKER_CRED_ID = config.dockerCredId ?: 'Docker_credentials'
-            KUBECONFIG_CRED_ID = config.kubeconfigId ?: 'kubeconfig'
-        }
-
         stages {
+            stage('Setup Environment') {
+                steps {
+                    script {
+                        env.IMAGE_NAME = config.imageName ?: 'my-org/java-app'
+                        env.TAG = config.tag ?: 'latest'
+                        env.DOCKER_CRED_ID = config.dockerCredId ?: 'docker-hub-cred'
+                        env.KUBECONFIG_CRED_ID = config.kubeconfigId ?: 'kubeconfig'
+                    }
+                }
+            }
+
             stage('Checkout') {
                 steps {
                     checkout scm
@@ -29,8 +33,8 @@ def call(Map config = [:]) {
                 }
                 steps {
                     script {
-                        docker.withRegistry('https://index.docker.io/v2/', DOCKER_CRED_ID) {
-                            def image = docker.build("${IMAGE_NAME}:${TAG}")
+                        docker.withRegistry('https://index.docker.io/v2/', env.DOCKER_CRED_ID) {
+                            def image = docker.build("${env.IMAGE_NAME}:${env.TAG}")
                             image.push()
                         }
                     }
@@ -42,7 +46,7 @@ def call(Map config = [:]) {
                     branch 'Develop'
                 }
                 steps {
-                    withKubeConfig([credentialsId: KUBECONFIG_CRED_ID]) {
+                    withKubeConfig([credentialsId: env.KUBECONFIG_CRED_ID]) {
                         sh 'kubectl apply -f deployment.yaml'
                         sh 'kubectl apply -f service.yaml'
                     }
