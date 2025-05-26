@@ -28,9 +28,9 @@ def call(Map config = [:]) {
             }
 
             stage('Docker Build and Push') {
-                when {
-                    branch 'Develop'
-                }
+                // when {
+                //     branch 'Develop'
+                // }
                 steps {
                     script {
                         docker.withRegistry('https://index.docker.io/v2/', env.DOCKER_CRED_ID) {
