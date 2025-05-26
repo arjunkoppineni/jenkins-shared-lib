@@ -8,7 +8,7 @@ def call(Map config = [:]) {
                     script {
                         env.IMAGE_NAME = config.imageName ?: 'my-org/java-app'
                         env.TAG = config.tag ?: 'latest'
-                        env.DOCKER_CRED_ID = config.dockerCredId ?: 'Docker_credentials'
+                        env.DOCKER_CRED_ID = config.dockerCredId ?: 'docker-hub-cred'
                         env.KUBECONFIG_CRED_ID = config.kubeconfigId ?: 'kubeconfig'
                     }
                 }
